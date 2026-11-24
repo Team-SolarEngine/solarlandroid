@@ -35,6 +35,7 @@ pub fn run() {
             shizuku::shizuku_make_dirs,
             shizuku::shizuku_rename,
             shizuku::shizuku_delete,
+            shizuku::shizuku_unzip,
             shizuku::shizuku_open_folder,
         ])
         .run(tauri::generate_context!())

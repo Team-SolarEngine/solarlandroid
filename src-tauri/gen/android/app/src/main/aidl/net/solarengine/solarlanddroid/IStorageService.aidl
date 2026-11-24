@@ -9,4 +9,5 @@ interface IStorageService {
     String delete(String path) = 4;
     String copy(String from, String to) = 5;
     String openFolder(String path) = 6;
+    String unzip(String zip, String dest) = 7;
 }

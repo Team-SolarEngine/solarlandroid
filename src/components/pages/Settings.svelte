@@ -1,7 +1,5 @@
 <script lang="ts">
     import { openUrl } from "@tauri-apps/plugin-opener";
-
-    
 </script>
 
 <div>

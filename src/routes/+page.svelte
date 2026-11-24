@@ -13,6 +13,7 @@
     import Gamebanana from "../components/popup/Gamebanana.svelte";
     import Snackbar from "../components/Snackbar.svelte";
     import ModsSection from "../components/popup/ModsSection.svelte";
+    import Download from "../components/popup/Download.svelte";
 
     let current_page = $state("instances");
 
@@ -32,6 +33,15 @@
         working_dir: ""
     })
     setContext('modsSection', (dat: any) => { msvar = dat })
+
+    let dlpvar = $state({
+        open: false,
+        url: "",
+        targetted_path: "",
+        download_name: "",
+        file_name: "",
+    })
+    setContext('download', (dat: any) => { dlpvar = dat })
 
     let local_instnace = $state({
         open: false,
@@ -132,3 +142,4 @@
 <Gamebanana bind:modalGameBanana modId={gameBananaModId} />
 <Snackbar bind:sbvar />
 <ModsSection bind:msvar />
+<Download bind:dlpvar />

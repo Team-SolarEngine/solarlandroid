@@ -5,6 +5,9 @@ import android.net.Uri
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.util.zip.ZipInputStream
 
 /**
  * Runs as the Shizuku user service, so these file operations happen with
@@ -66,6 +69,46 @@ class StorageService : IStorageService.Stub() {
     source.copyRecursively(target, overwrite = true)
     ""
   }.getOrElse { it.message ?: "Failed to copy $from" }
+
+  override fun unzip(zip: String, dest: String): String = runCatching {
+    val root = File(dest).canonicalFile
+    if (!root.isDirectory && !root.mkdirs()) {
+      throw IllegalStateException("Failed to create $dest")
+    }
+
+    val rootPath = root.canonicalPath
+    val rootPrefix = if (rootPath.endsWith(File.separator)) rootPath else rootPath + File.separator
+    var entries = 0
+
+    ZipInputStream(FileInputStream(zip)).use { stream ->
+      var entry = stream.nextEntry
+      while (entry != null) {
+        val name = entry.name.replace('\\', '/')
+        if (name.startsWith("/") || name.split('/').any { it == ".." }) {
+          throw IllegalArgumentException("Unsafe path in zip: ${entry.name}")
+        }
+
+        val target = File(root, name).canonicalFile
+        val targetPath = target.canonicalPath
+        if (targetPath != rootPath && !targetPath.startsWith(rootPrefix)) {
+          throw IllegalArgumentException("Unsafe path in zip: ${entry.name}")
+        }
+
+        if (entry.isDirectory) {
+          target.mkdirs()
+        } else {
+          target.parentFile?.mkdirs()
+          FileOutputStream(target).use { output -> stream.copyTo(output) }
+        }
+
+        stream.closeEntry()
+        entry = stream.nextEntry
+        entries++
+      }
+    }
+
+    if (entries == 0) "No files found in $zip" else ""
+  }.getOrElse { it.message ?: "Failed to unzip $zip" }
 
   override fun openFolder(path: String): String = runCatching {
     val normalized = path.replace('\\', '/')

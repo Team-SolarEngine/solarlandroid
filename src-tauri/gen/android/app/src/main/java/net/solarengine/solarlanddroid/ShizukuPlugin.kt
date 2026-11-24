@@ -122,6 +122,13 @@ class ShizukuPlugin(private val activity: Activity) : Plugin(activity) {
     runOperation(invoke) { it.openFolder(path) }
   }
 
+  @Command
+  fun unzip(invoke: Invoke) {
+    val zip = invoke.getArgs().getString("zip")
+    val dest = invoke.getArgs().getString("dest")
+    runOperation(invoke) { it.unzip(zip, dest) }
+  }
+
   private fun runOperation(invoke: Invoke, operation: (IStorageService) -> String?) {
     val storage = requireService(invoke) ?: return
     try {

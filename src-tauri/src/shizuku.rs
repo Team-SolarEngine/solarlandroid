@@ -129,6 +129,21 @@ pub fn shizuku_delete<R: Runtime>(app: AppHandle<R>, path: String) -> Result<Val
 }
 
 #[tauri::command]
+pub fn shizuku_unzip<R: Runtime>(app: AppHandle<R>, zip: String, dest: String) -> Result<Value, String> {
+    #[cfg(target_os = "android")]
+    {
+        let plugin = app.state::<Shizuku<R>>();
+        call(&plugin.0, "unzip", json!({ "zip": zip, "dest": dest }))
+    }
+
+    #[cfg(not(target_os = "android"))]
+    {
+        let _ = (app, zip, dest);
+        Ok(json!({ "ok": true }))
+    }
+}
+
+#[tauri::command]
 pub fn shizuku_open_folder<R: Runtime>(app: AppHandle<R>, path: String) -> Result<Value, String> {
     #[cfg(target_os = "android")]
     {
