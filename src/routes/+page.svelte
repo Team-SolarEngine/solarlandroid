@@ -11,11 +11,20 @@
     import { getCurrent, onOpenUrl } from "@tauri-apps/plugin-deep-link";
     import { error } from "@tauri-apps/plugin-log";
     import Gamebanana from "../components/popup/Gamebanana.svelte";
+    import Snackbar from "../components/Snackbar.svelte";
 
     let current_page = $state("instances");
 
     const fly_in = { x: -40, y: -40, opacity: 0, duration: 250, easing: cubicOut };
     const fly_out = { y: 40, opacity: 0, duration: 200, easing: cubicOut };
+
+    let sbvar = $state({
+        active: false,
+        type: "",
+        top: false,
+        text: "",
+    })
+    setContext('snackbar', (dat: any) => { sbvar = dat })
 
     let local_instnace = $state({
         open: false,
@@ -114,3 +123,4 @@
 
 <Local bind:vars={local_instnace} />
 <Gamebanana bind:modalGameBanana modId={gameBananaModId} />
+<Snackbar bind:sbvar />

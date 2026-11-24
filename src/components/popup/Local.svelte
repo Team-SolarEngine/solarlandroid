@@ -1,12 +1,41 @@
 <script lang="ts">
+    import { LazyStore } from "@tauri-apps/plugin-store";
     import CardApp from "../CardApp.svelte";
+    import { getContext } from "svelte";
 
     let { vars = $bindable() } = $props()
+    const store = new LazyStore('data.json');
+    const snackbar: any = getContext('snackbar')
 
     let instance_name = $state("")
     let instance_icon = $state("")
     let instance_description = $state("")
     let instance_working_dir = $state("")
+
+    function emptyVars() {
+        instance_name = ""
+        instance_icon = ""
+        instance_description = ""
+        instance_working_dir = ""
+    }
+
+    async function save() {
+        if (!instance_name || !instance_working_dir) return snackbar({
+            active: true,
+            top: true,
+            type: "error",
+            text: "Either Name or Working Directory is missing. Please fill it in."
+        });
+
+        await store.set("instances", {
+            name: instance_name,
+            icon: instance_icon,
+            desc: instance_description,
+            wd: instance_working_dir,
+        })
+        vars.open = false
+        emptyVars()
+    }
 </script>
 
 <div class="overlay" class:active={vars.open} onclick={() => vars.open = false}></div>
@@ -18,25 +47,25 @@
     {/if}
 
     <div class="field label border">
-        <input type="text">
+        <input type="text" bind:value={instance_name}>
         <label>Name</label>
         <output>The name of your instance!</output>
     </div>
 
     <div class="field label border">
-        <input type="text">
+        <input type="text" bind:value={instance_icon}>
         <label>Icon (URL)</label>
         <output>The URL path to your instance! We reccomend URL.</output>
     </div>
 
     <div class="field label border">
-        <input type="text">
+        <input type="text" bind:value={instance_description}>
         <label>Description</label>
         <output>What do you wanna describe your instance? Something cool?</output>
     </div>
 
     <div class="field label border">
-        <input type="text">
+        <input type="text" bind:value={instance_working_dir}>
         <label>Working Directory</label>
         <output>Where's your instance located? It should start at the home folder of your android! <b>HINT: Use Zarchiver.</b></output>
     </div>
@@ -49,7 +78,7 @@
         preview={true}
     />
 
-    <div style="margin-top: 14px;" class="right-align">
+    <div style="margin-top: 14px;" class="right-align" onclick={() => save()}>
         <button><i>add</i> Add</button>
     </div>
 </dialog>
