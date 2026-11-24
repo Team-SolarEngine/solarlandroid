@@ -35,6 +35,14 @@ jobs:
           sdkmanager "ndk;27.0.11902837"
           echo "NDK_HOME=$ANDROID_HOME/ndk/27.0.11902837" >> "$GITHUB_ENV"
 
+      - name: Setup Android signing
+        run: |
+          cd src-tauri/gen/android
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" > keystore.properties
+          echo "password=${{ secrets.ANDROID_KEY_PASSWORD }}" >> keystore.properties
+          base64 -d <<< "${{ secrets.ANDROID_KEY_BASE64 }}" > $RUNNER_TEMP/keystore.jks
+          echo "storeFile=$RUNNER_TEMP/keystore.jks" >> keystore.properties
+
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
