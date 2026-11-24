@@ -29,4 +29,10 @@
             </div>
         {/if}
     </div>
+
+    {#if current_page == "instances"}
+        <div in:fly={fly_in} out:fly={fly_out} style="position: fixed; right: 0; bottom: 0; padding: 24px;">
+            <button class="circle extra"><i>add</i></button>
+        </div>
+    {/if}
 </div>
