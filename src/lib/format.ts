@@ -18,3 +18,7 @@ export function formatBytes(bytes: number) {
     }
     return `${value.toFixed(1)} ${units[i]}`;
 }
+
+function truncateString(str: string, max_length: number) {
+    return str.length > max_length ? str.slice(0, max_length).trimEnd() + '...' : str;
+}

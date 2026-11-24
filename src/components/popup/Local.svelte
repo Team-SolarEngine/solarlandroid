@@ -11,12 +11,14 @@
     let instance_icon = $state("")
     let instance_description = $state("")
     let instance_working_dir = $state("")
+    let original_working_dir = $state("");
 
     function emptyVars() {
-        instance_name = ""
-        instance_icon = ""
-        instance_description = ""
-        instance_working_dir = ""
+        instance_name = "";
+        instance_icon = "";
+        instance_description = "";
+        instance_working_dir = "";
+        original_working_dir = "";
     }
 
     async function save() {
@@ -28,18 +30,40 @@
         });
 
         const instances = (await store.get<Instance[]>("instances")) ?? [];
-        instances.push({
+        const updated: Instance = {
             name: instance_name,
             icon: instance_icon,
             desc: instance_description,
             wd: instance_working_dir,
-        });
+        };
 
-        await store.set("instances", instances);
+        const next = vars.editing
+            ? instances.map((instance) =>
+                instance.wd === original_working_dir ? updated : instance
+            )
+            : [...instances, updated];
+
+        await store.set("instances", next);
         await store.save();
+
         vars.open = false;
+        vars.editing = false;
         emptyVars();
     }
+
+    $effect(() => {
+        if (!vars.open) return;
+    
+        if (vars.editing) {
+            instance_name = vars.name ?? "";
+            instance_icon = vars.image ?? "";
+            instance_description = vars.desc ?? "";
+            instance_working_dir = vars.working_dir ?? "";
+            original_working_dir = vars.working_dir ?? "";
+        } else {
+            emptyVars();
+        }
+    });
 </script>
 
 <div class="overlay" class:active={vars.open} onclick={() => vars.open = false}></div>
