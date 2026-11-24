@@ -13,7 +13,12 @@
 </script>
 
 <div style="height: 100vh; display: flex; flex-direction: column;">
-    <div style="flex: 1; padding: 16px; margin-top: 24px;">
+    <div class="tabs">
+        <a style="padding-top: 2.5rem;" class="vertical" onclick={() => current_page = "instances"} class:active={current_page == "instances"}><i>list</i> Instances</a>
+        <a style="padding-top: 2.5rem;" class="vertical" onclick={() => current_page = "settings"} class:active={current_page == "settings"}><i>settings</i> Settings</a>
+    </div>
+
+    <div style="flex: 1; padding: 16px;">
         {#if current_page == "instances"}
             <div in:fly={fly_in} out:fly={fly_out} style="position: fixed;">
                 <Instances/>
@@ -23,11 +28,5 @@
                 <Settings/>
             </div>
         {/if}
-    </div>
-    <div>
-        <div class="tabs">
-            <a class="vertical" onclick={() => current_page = "instances"} class:active={current_page == "instances"}><i>list</i> Instances</a>
-            <a class="vertical" onclick={() => current_page = "settings"} class:active={current_page == "settings"}><i>settings</i> Settings</a>
-        </div>
     </div>
 </div>
