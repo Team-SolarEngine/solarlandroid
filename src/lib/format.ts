@@ -1,4 +1,4 @@
-function formatBytes(bytes: number) {
+export function formatBytes(bytes: number) {
     /*
         * This function turns a byte count into a readable size string.
         *

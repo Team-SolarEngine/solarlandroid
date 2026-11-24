@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { LazyStore } from "@tauri-apps/plugin-store";
     import CardApp from "../CardApp.svelte";
     import { getContext } from "svelte";
+    import type { Instance } from "$lib/types";
+    import { store } from "$lib/store";
 
     let { vars = $bindable() } = $props()
-    const store = new LazyStore('data.json');
     const snackbar: any = getContext('snackbar')
 
     let instance_name = $state("")
@@ -27,14 +27,18 @@
             text: "Either Name or Working Directory is missing. Please fill it in."
         });
 
-        await store.set("instances", {
+        const instances = (await store.get<Instance[]>("instances")) ?? [];
+        instances.push({
             name: instance_name,
             icon: instance_icon,
             desc: instance_description,
             wd: instance_working_dir,
-        })
-        vars.open = false
-        emptyVars()
+        });
+
+        await store.set("instances", instances);
+        await store.save();
+        vars.open = false;
+        emptyVars();
     }
 </script>
 

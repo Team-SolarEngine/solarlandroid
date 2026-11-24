@@ -10,10 +10,12 @@
 
 <article style="display: flex; flex-direction: column;">
     <div style="display: flex; gap: 8px; width: 85vw;">
-        <img style="width: 80px;" src={image} alt={name}/>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
+        <img style="width: 80px;" src={image || "/preview.jpg"} alt={name}/>
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 8px;">
             <span style="font-size: 2rem;">{name}</span>
-            <span style="opacity: 0.5;">{description}</span>
+            {#if description}
+                <span style="opacity: 0.5;">{description}</span>
+            {/if}
         </div>
     </div>
 
