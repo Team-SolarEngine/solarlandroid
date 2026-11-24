@@ -5,9 +5,12 @@
     import { fly } from 'svelte/transition';
     import Instances from "../components/pages/Instances.svelte";
     import Settings from "../components/pages/Settings.svelte";
-    import { setContext, getContext } from "svelte";
+    import { setContext, getContext, onMount } from "svelte";
     import Local from "../components/popup/Local.svelte";
     import { impactFeedback } from "@tauri-apps/plugin-haptics";
+    import { getCurrent, onOpenUrl } from "@tauri-apps/plugin-deep-link";
+    import { error } from "@tauri-apps/plugin-log";
+    import Gamebanana from "../components/popup/Gamebanana.svelte";
 
     let current_page = $state("instances");
 
@@ -29,6 +32,36 @@
         current_page = page;
         await impactFeedback('light')
     }
+
+    let modalGameBanana = $state(false);
+    let gameBananaModId = $state(0);
+    async function handleDeepLink(url: string) {
+        /*
+            * This function handles a solar-launch:// deep link.
+            * It expects links like solar-launch://mods/<id>,
+            * then opens the GameBanana mod popup with that id.
+            *
+            * Arguments:
+            *    url: string -> the full deep link url
+            */
+        try {
+            const parsed = new URL(url);
+            const path = parsed.pathname.split("/").filter(Boolean);
+            if (parsed.protocol === "solar-launch:" && parsed.host === "gb-mods") {
+                gameBananaModId = Number(path[0]);
+                modalGameBanana = true;
+            }
+        } catch (e) {
+            error(`${e}`);
+        }
+    }
+
+    onMount(() => {
+
+        // deeplink support - taken from SLDesktop!
+        onOpenUrl((urls) => { for (const url of urls) handleDeepLink(url); });
+        getCurrent().then((urls) => { if (urls) for (const url of urls) handleDeepLink(url); });
+    })
 </script>
 
 <div style="height: 100vh; display: flex; flex-direction: column;">
@@ -81,3 +114,4 @@
 </div>
 
 <Local bind:vars={local_instnace} />
+<Gamebanana bind:modalGameBanana modId={gameBananaModId} />
