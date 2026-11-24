@@ -1,98 +1,165 @@
 <script lang="ts">
     import type { Mods } from "$lib/types";
     import { invoke } from "@tauri-apps/api/core";
+    import { homeDir } from "@tauri-apps/api/path";
     import { error } from "@tauri-apps/plugin-log";
 
-    let {
-        working_dir = "",
-        open = false,
-    } = $props()
+    let { msvar = $bindable() } = $props()
+
+    type StorageItem = { path: string; isFolder: boolean };
 
     let mods = $state<Array<Mods>>([]);
+    let test_path = $state("")
+    let list_error = $state("")
+
+    let shizuku = $state({
+        binder: false,
+        permissionGranted: false,
+        serviceReady: false,
+        error: "",
+    })
+
+    async function refreshShizukuStatus() {
+        try {
+            const status: any = await invoke("shizuku_status");
+            shizuku.binder = !!status.binder;
+            shizuku.permissionGranted = !!status.permissionGranted;
+            shizuku.serviceReady = !!status.serviceReady;
+            shizuku.error = status.error ?? "";
+        } catch (e) {
+            shizuku.error = `${e}`;
+        }
+    }
+
+    async function requestShizuku() {
+        try {
+            list_error = "";
+            await invoke("shizuku_request_permission");
+
+            for (let i = 0; i < 10; i++) {
+                await refreshShizukuStatus();
+                if (shizuku.serviceReady) break;
+                await new Promise((resolve) => setTimeout(resolve, 200));
+            }
+
+            if (shizuku.serviceReady) await listMods();
+        } catch (e) {
+            list_error = `${e}`;
+            error(`${e}`);
+        }
+    }
+
+    async function listShizukuFolder(path: string): Promise<StorageItem[]> {
+        const result: any = await invoke("shizuku_list_folder", { path });
+        return (result.items ?? []).filter((item: StorageItem) => item.isFolder);
+    }
 
     async function listMods() {
-        /*
-         * This function lists all the mods from both the mods folder
-         * and the disabled-mods folder, combined into a single list.
-         * Each mod keeps an enabled flag so it can be toggled.
-         *
-         * Returns:
-         *     mods: Array -> An array of mod objects.
-         */
+        mods = [];
+        list_error = "";
+
+        if (!msvar.working_dir) return;
 
         try {
-            mods = [];
+            test_path = `${await homeDir()}/${msvar.working_dir}`;
 
-            const enabledFolderFinal = `${working_dir}/mods`
-            const enabledFolders: any[] = await invoke("list_folder", { workingDirectory: enabledFolderFinal, showFoldersOnly: true });
+            await invoke("shizuku_make_dirs", { path: `${test_path}/mods` });
+            await invoke("shizuku_make_dirs", { path: `${test_path}/disabled-mods` });
+
+            const enabledFolders = await listShizukuFolder(`${test_path}/mods`);
             for (const modFolder of enabledFolders) {
-                mods.push({ folder: modFolder, name: modFolder.split(/[/\\]/).pop() ?? modFolder, enabled: true });
+                mods.push({ folder: modFolder.path, name: modFolder.path.split(/[/\\]/).pop() ?? modFolder.path, enabled: true });
             }
 
-            let disabledFolderFinal = `${working_dir}/disabled-mods`;
-            const disabledFolders: any[] = await invoke("list_folder", { workingDirectory: disabledFolderFinal, showFoldersOnly: true });
+            const disabledFolders = await listShizukuFolder(`${test_path}/disabled-mods`);
             for (const modFolder of disabledFolders) {
-                mods.push({ folder: modFolder, name: modFolder.split(/[/\\]/).pop() ?? modFolder, enabled: false });
+                mods.push({ folder: modFolder.path, name: modFolder.path.split(/[/\\]/).pop() ?? modFolder.path, enabled: false });
             }
         } catch (e) {
+            list_error = `${e}`;
             error(`${e}`)
         }
     }
 
     async function toggleMod(mod: { folder: string }, enable: boolean) {
-        /*
-         * This function moves a mod between the mods folder and the
-         * disabled-mods folder, then refreshes both lists.
-         */
         try {
-            await invoke("toggle_mod", {
-                modFolder: mod.folder,
-                workingDirectory: working_dir,
-                modsFolder: "mods",
-                enable,
-                typeOf: "mods",
-            });
+            const base = `${await homeDir()}/${msvar.working_dir}`;
+            const folderName = mod.folder.split(/[/\\]/).pop() ?? mod.folder;
+            const destination = `${base}/${enable ? "mods" : "disabled-mods"}/${folderName}`;
+
+            await invoke("shizuku_rename", { from: mod.folder, to: destination });
             await listMods();
         } catch (e) {
+            list_error = `${e}`;
             error(`${e}`)
         }
     }
 
     async function trashMod(modFolder: string) {
-        /*
-         * This functions calls the Tauri backend to
-         * trash the folder given from the arguments.
-         * 
-         * Arguments:
-         *    modFolder: string -> The folder you want to delete
-         */
-
         try {
-            await invoke("trash_folder", { modFolder });
+            await invoke("shizuku_delete", { path: modFolder });
             await listMods();
         } catch (e) {
+            list_error = `${e}`;
+            error(`${e}`)
+        }
+    }
+
+    async function openFolder(path: string) {
+        try {
+            await invoke("shizuku_open_folder", { path });
+        } catch(e) {
+            list_error = `${e}`;
             error(`${e}`)
         }
     }
 
     $effect(() => {
-        if (open) {
-            listMods()
-        }
+        msvar.open;
+        msvar.working_dir;
+        refreshShizukuStatus();
+        listMods()
     })
 </script>
 
-<div class="overlay" class:active={open} onclick={() => open = false}></div>
-<dialog class="bottom" class:active={open}>
-    {#if mods.length > 1}
+<div class="overlay" class:active={msvar.open} onclick={() => msvar.open = false}></div>
+<dialog class="right" class:active={msvar.open}>
+    <h3>Mod Manager</h3>
+    <span>Manage your mods here! You can open the folder, delete content, or enable/disable them!</span>
+
+    {#if !shizuku.serviceReady}
+        <article class="border orange">
+            <span>
+                {!shizuku.binder
+                    ? "Start Shizuku, then open the mod manager."
+                    : shizuku.permissionGranted
+                        ? "Connecting to Shizuku..."
+                        : "Grant Shizuku access to manage Android/obb folders."}
+            </span>
+            {#if shizuku.binder && !shizuku.permissionGranted}
+                <button class="border" onclick={requestShizuku}><i>key</i> Grant Shizuku</button>
+            {/if}
+        </article>
+    {/if}
+
+    {#if list_error}
+        <article class="border red">
+            <span>{list_error}</span>
+        </article>
+    {/if}
+
+    <hr class="medium" />
+
+    {#if mods.length > 0}
         {#each mods as mod}
             <article style={mod.enabled ? "" : "opacity: 0.5;"}>
-                <div style="display; flex; flex-direction: row;">
-                    <div style="flex: 1; min-width: 0;">
+                <div style="display: flex; flex-direction: row; align-items: center;">
+                    <div style="flex: 1; min-width: 0; overflow-wrap: anywhere;">
                         <h6>{mod.name}</h6>
                     </div>
 
-                    <div class="no-space row" style="margin-left: 12px;">
+                    <div class="no-space" style="margin-left: 12px; display: flex; flex-direction: row; align-items: center;">
+                        <button class="transparent circle" onclick={() => openFolder(mod.folder)}><i>folder</i></button>
                         <button class="transparent circle" onclick={() => trashMod(mod.folder)}><i>delete</i></button>
                         <label class="checkbox large">
                             <input type="checkbox" checked={mod.enabled} onchange={() => toggleMod(mod, !mod.enabled)} />
@@ -102,7 +169,16 @@
                 </div>
             </article>
         {/each}
-    {:else}
-        <span>Mods is empty. Try adding mods!</span>
+    {:else if !list_error}
+        <span>Mods is empty. Try adding mods! <code>{test_path}</code></span>
     {/if}
+
+    <div class="right-align no-space" style="margin-top: 16px;">
+        <button class="transparent" onclick={() => openFolder(test_path)}>
+            <i>folder</i> Open Folder
+        </button>
+        <button class="transparent" onclick={() => msvar.open = false}>
+            <i>close</i> Close
+        </button>
+    </div>
 </dialog>

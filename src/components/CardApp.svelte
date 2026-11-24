@@ -13,7 +13,7 @@
     } = $props()
 
     const openInstancePopup: any = getContext("addInstance");
-    let open_mod_contents = $state(false);
+    const openModsSection: any = getContext("modsSection");
 
     // muahaha I'm evil
     //   for context, since the function to refresh the
@@ -51,7 +51,7 @@
     <div style="display: flex; gap: 8px; width: 85vw;">
         <img style="width: 80px;" src={image || "/preview.jpg"} alt={name}/>
         <div style="display: flex; flex-direction: column; justify-content: center; gap: 8px;">
-            <span style="font-size: 2rem;">{name}</span>
+            <span style="font-size: 1.75rem; overflow-wrap: anywhere;">{name}</span>
             {#if description}
                 <span style="opacity: 0.5;">{description}</span>
             {/if}
@@ -60,7 +60,7 @@
 
     {#if !preview}
     <nav class="group connected" style="justify-content: center;">
-        <button class="border left-round" onclick={() => open_mod_contents = true}>
+        <button class="border left-round" onclick={() => openModsSection({open: true, working_dir})}>
             <i>folder</i>
             <span>Mods</span>
         </button>
@@ -80,11 +80,4 @@
     <div class="shape loading-indicator medium"></div>
     <span>{fake_anim_text}</span>
 </article>
-{/if}
-
-{#if !preview}
-<ModsSection
-    working_dir={working_dir}
-    open={open_mod_contents}
-/>
 {/if}

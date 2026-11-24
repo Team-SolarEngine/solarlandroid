@@ -8,7 +8,7 @@ pub struct FolderItem {
 }
 
 #[tauri::command]
-pub fn list_folder(working_directory: &str, show_folders_only: bool) -> Vec<FolderItem> {
+pub fn list_folder(working_directory: &str, show_folders_only: bool) -> Result<Vec<FolderItem>, String> {
     /*
      * This function lists all the files and folders inside the
      * given working directory. When show_folders_only is true,
@@ -20,26 +20,30 @@ pub fn list_folder(working_directory: &str, show_folders_only: bool) -> Vec<Fold
      *                               false lists files and folders
      *
      * Returns:
-     *    Vec<FolderItem> -> a list of paths with a folder/file flag
+     *    Result<Vec<FolderItem>, String> -> a list of paths with a folder/file flag,
+     *                                       or the reason the folder can't be read
      */
     let mut contents = Vec::new();
-    let working_path = format!("{working_directory}");
 
-    if let Ok(entries) = fs::read_dir(&working_path) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-            let is_folder = path.is_dir();
+    fs::create_dir_all(working_directory)
+        .map_err(|e| format!("Cannot open {working_directory}: {e}"))?;
 
-            if !show_folders_only || is_folder {
-                contents.push(FolderItem {
-                    path: path.to_str().unwrap().to_string(),
-                    is_folder,
-                });
-            }
+    let entries = fs::read_dir(working_directory)
+        .map_err(|e| format!("Cannot read {working_directory}: {e}"))?;
+
+    for entry in entries.flatten() {
+        let path = entry.path();
+        let is_folder = path.is_dir();
+
+        if !show_folders_only || is_folder {
+            contents.push(FolderItem {
+                path: path.to_str().unwrap_or_default().to_string(),
+                is_folder,
+            });
         }
     }
 
-    contents
+    Ok(contents)
 }
 
 #[tauri::command]

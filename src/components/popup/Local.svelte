@@ -3,7 +3,6 @@
     import { getContext } from "svelte";
     import type { Instance } from "$lib/types";
     import { store } from "$lib/store";
-    import { pickFile } from "$lib/sys";
 
     let { vars = $bindable() } = $props()
     const snackbar: any = getContext('snackbar')
@@ -54,7 +53,7 @@
 
     $effect(() => {
         if (!vars.open) return;
-    
+
         if (vars.editing) {
             instance_name = vars.name ?? "";
             instance_icon = vars.image ?? "";
@@ -93,11 +92,10 @@
         <output>What do you wanna describe your instance? Something cool?</output>
     </div>
 
-    <div class="field label prefix border">
-        <a onclick={async () => instance_working_dir = await pickFile([], "Folder", true)}> <i>attach_file</i> </a>
+    <div class="field label border">
         <input type="text" bind:value={instance_working_dir}>
         <label>Working Directory</label>
-        <output>Where's your instance located? It should start at the home folder of your android! <b>HINT: Use Zarchiver.</b></output>
+        <output>Relative to Android storage, eg; <code>Android/obb/me.funkin.fnf</code>. Needs Shizuku on Android 11+.</output>
     </div>
 
     <CardApp
@@ -108,7 +106,8 @@
         preview={true}
     />
 
-    <div style="margin-top: 14px;" class="right-align" onclick={() => save()}>
-        <button><i>add</i> Add</button>
+    <div style="margin-top: 14px;" class="right-align">
+        <button class="transparent" onclick={() => vars.open = false}><i>close</i> Close</button>
+        <button onclick={() => save()}><i>add</i> Add</button>
     </div>
 </dialog>

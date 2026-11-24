@@ -1,6 +1,7 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 
 mod files;
+mod shizuku;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -10,6 +11,7 @@ fn greet(name: &str) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(shizuku::init())
         .plugin(tauri_plugin_deep_link::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_store::Builder::new().build())
@@ -27,6 +29,13 @@ pub fn run() {
             files::toggle_mod,
             files::trash_folder,
             files::paste_to_dir,
+            shizuku::shizuku_status,
+            shizuku::shizuku_request_permission,
+            shizuku::shizuku_list_folder,
+            shizuku::shizuku_make_dirs,
+            shizuku::shizuku_rename,
+            shizuku::shizuku_delete,
+            shizuku::shizuku_open_folder,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

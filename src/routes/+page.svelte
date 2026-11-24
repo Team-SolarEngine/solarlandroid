@@ -12,6 +12,7 @@
     import { error } from "@tauri-apps/plugin-log";
     import Gamebanana from "../components/popup/Gamebanana.svelte";
     import Snackbar from "../components/Snackbar.svelte";
+    import ModsSection from "../components/popup/ModsSection.svelte";
 
     let current_page = $state("instances");
 
@@ -25,6 +26,12 @@
         text: "",
     })
     setContext('snackbar', (dat: any) => { sbvar = dat })
+
+    let msvar = $state({
+        open: false,
+        working_dir: ""
+    })
+    setContext('modsSection', (dat: any) => { msvar = dat })
 
     let local_instnace = $state({
         open: false,
@@ -124,3 +131,4 @@
 <Local bind:vars={local_instnace} />
 <Gamebanana bind:modalGameBanana modId={gameBananaModId} />
 <Snackbar bind:sbvar />
+<ModsSection bind:msvar />
