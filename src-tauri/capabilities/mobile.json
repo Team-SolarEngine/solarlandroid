@@ -8,6 +8,12 @@
     "main"
   ],
   "permissions": [
-    "haptics:default"
+    "core:default",
+    "core:event:default",
+    "opener:default",
+    "log:default",
+    "upload:default",
+    "deep-link:default",
+    "store:default"
   ]
 }

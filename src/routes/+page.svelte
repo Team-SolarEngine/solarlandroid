@@ -57,7 +57,6 @@
     }
 
     onMount(() => {
-
         // deeplink support - taken from SLDesktop!
         onOpenUrl((urls) => { for (const url of urls) handleDeepLink(url); });
         getCurrent().then((urls) => { if (urls) for (const url of urls) handleDeepLink(url); });

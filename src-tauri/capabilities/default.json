@@ -7,8 +7,11 @@
   ],
   "permissions": [
     "core:default",
+    "core:event:default",
     "opener:default",
     "log:default",
-    "upload:default"
+    "upload:default",
+    "deep-link:default",
+    "store:default"
   ]
 }
