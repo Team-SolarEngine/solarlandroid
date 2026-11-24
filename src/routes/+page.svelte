@@ -7,10 +7,11 @@
     import Settings from "../components/pages/Settings.svelte";
     import { setContext, getContext } from "svelte";
     import Local from "../components/popup/Local.svelte";
+    import { impactFeedback } from "@tauri-apps/plugin-haptics";
 
     let current_page = $state("instances");
 
-    const fly_in = { x: -40, y: -40, opacity: 1, duration: 250, easing: cubicOut };
+    const fly_in = { x: -40, y: -40, opacity: 0, duration: 250, easing: cubicOut };
     const fly_out = { y: 40, opacity: 0, duration: 200, easing: cubicOut };
 
     let local_instnace = $state({
@@ -22,8 +23,12 @@
         working_dir: ""
     })
     setContext('addInstance', (dat: any) => { local_instnace = dat })
-
     const addInstance: any = getContext('addInstance')
+
+    async function switchPage(page: string) {
+        current_page = page;
+        await impactFeedback('light')
+    }
 </script>
 
 <div style="height: 100vh; display: flex; flex-direction: column;">
@@ -70,8 +75,8 @@
     {/if}
 
     <nav class="bottom">
-        <a style="padding-top: 2.5rem;" class="vertical" onclick={() => current_page = "instances"} class:active={current_page == "instances"}><i>list</i> Instances</a>
-        <a style="padding-top: 2.5rem;" class="vertical" onclick={() => current_page = "settings"} class:active={current_page == "settings"}><i>settings</i> Settings</a>
+        <a style="padding-top: 2.5rem;" class="vertical" onclick={() => switchPage("instances")} class:active={current_page == "instances"}><i>list</i> Instances</a>
+        <a style="padding-top: 2.5rem;" class="vertical" onclick={() => switchPage("settings")} class:active={current_page == "settings"}><i>settings</i> Settings</a>
     </nav>
 </div>
 
