@@ -5,11 +5,25 @@
     import { fade, fly } from 'svelte/transition';
     import Instances from "../components/pages/Instances.svelte";
     import Settings from "../components/pages/Settings.svelte";
+    import { setContext, getContext } from "svelte";
+    import Local from "../components/popup/Local.svelte";
 
     let current_page = $state("instances");
 
     const fly_in = { y: -40, opacity: 1, duration: 250, easing: cubicOut };
     const fly_out = { y: 40, opacity: 0, duration: 250, easing: cubicOut };
+
+    let local_instnace = $state({
+        open: false,
+        editing: false,
+        name: "",
+        desc: "",
+        image: "",
+        working_dir: ""
+    })
+    setContext('addInstance', (dat: any) => { local_instnace = dat })
+
+    const addInstance: any = getContext('addInstance')
 </script>
 
 <div style="height: 100vh; display: flex; flex-direction: column;">
@@ -32,7 +46,9 @@
 
     {#if current_page == "instances"}
         <div in:fly={fly_in} out:fly={fly_out} style="position: fixed; right: 0; bottom: 0; padding: 24px;">
-            <button class="circle extra"><i>add</i></button>
+            <button class="circle extra" onclick={() => addInstance({open: true})}><i>add</i></button>
         </div>
     {/if}
 </div>
+
+<Local bind:vars={local_instnace} />

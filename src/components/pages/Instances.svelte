@@ -5,16 +5,5 @@
 <div>
     <div style="overflow-y: auto; height: 100dvh; padding-bottom: 8rem;">
         <CardApp/>
-        <CardApp/>
-        <CardApp/>
-        <CardApp/>
-        <CardApp/>
-        <CardApp/>
-        <CardApp/>
-        <CardApp/>
-        <CardApp/>
-        <CardApp/>
-        <CardApp/>
-        <CardApp/>
     </div>
 </div>

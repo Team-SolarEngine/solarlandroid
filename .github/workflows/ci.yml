@@ -8,7 +8,7 @@ on:
       - 'static/**'
       - 'pnpm-lock.yaml'
       - 'package.json'
-      - '.github/workflows/ci.yaml'
+      - '.github/workflows/ci.yml'
   workflow_dispatch:
 
 jobs:

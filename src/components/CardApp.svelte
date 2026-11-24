@@ -4,6 +4,7 @@
         image = "https://duckduckgo.com/i/e39c0e602fe42691.png",
         working_dir = "",
         description = "The funkin' game!",
+        preview = false,
     } = $props()
 </script>
 
@@ -16,6 +17,7 @@
         </div>
     </div>
 
+    {#if !preview}
     <nav class="group connected" style="justify-content: center;">
         <button class="border left-round">
             <i>folder</i>
@@ -30,4 +32,5 @@
             <span>Delete</span>
         </button>
     </nav>
+    {/if}
 </article>
