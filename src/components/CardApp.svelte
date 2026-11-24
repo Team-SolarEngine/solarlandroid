@@ -2,6 +2,7 @@
     import { store } from "$lib/store";
     import type { Instance } from "$lib/types";
     import { getContext } from "svelte";
+    import ModsSection from "./popup/ModsSection.svelte";
 
     let {
         name = "Funkin'",
@@ -12,6 +13,7 @@
     } = $props()
 
     const openInstancePopup: any = getContext("addInstance");
+    let open_mod_contents = $state(false);
 
     // muahaha I'm evil
     //   for context, since the function to refresh the
@@ -58,7 +60,7 @@
 
     {#if !preview}
     <nav class="group connected" style="justify-content: center;">
-        <button class="border left-round">
+        <button class="border left-round" onclick={() => open_mod_contents = true}>
             <i>folder</i>
             <span>Mods</span>
         </button>
@@ -78,4 +80,11 @@
     <div class="shape loading-indicator medium"></div>
     <span>{fake_anim_text}</span>
 </article>
+{/if}
+
+{#if !preview}
+<ModsSection
+    working_dir={working_dir}
+    open={open_mod_contents}
+/>
 {/if}

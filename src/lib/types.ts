@@ -4,3 +4,9 @@ export type Instance = {
     desc: string;
     wd: string;
 };
+
+export type Mods = {
+    folder: string;
+    name: string;
+    enabled: boolean;
+}

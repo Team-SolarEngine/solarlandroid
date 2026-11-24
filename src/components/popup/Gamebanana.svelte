@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { formatBytes } from "$lib/format";
     import { debug, error } from "@tauri-apps/plugin-log";
 
     let {

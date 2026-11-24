@@ -3,6 +3,7 @@
     import { getContext } from "svelte";
     import type { Instance } from "$lib/types";
     import { store } from "$lib/store";
+    import { pickFile } from "$lib/sys";
 
     let { vars = $bindable() } = $props()
     const snackbar: any = getContext('snackbar')
@@ -92,7 +93,8 @@
         <output>What do you wanna describe your instance? Something cool?</output>
     </div>
 
-    <div class="field label border">
+    <div class="field label prefix border">
+        <a onclick={async () => instance_working_dir = await pickFile([], "Folder", true)}> <i>attach_file</i> </a>
         <input type="text" bind:value={instance_working_dir}>
         <label>Working Directory</label>
         <output>Where's your instance located? It should start at the home folder of your android! <b>HINT: Use Zarchiver.</b></output>
