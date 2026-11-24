@@ -39,7 +39,7 @@
                 overflow-x: hidden;
             ">
                 <h2>Instances</h2>
-                <span>This is all where your instances go! Manage them! Or don't.</span>
+                <span>This is all where your instances go! Manage them! Or don't. We needed a heading here, since it's looks empty.</span>
                 <hr class="medium" />
 
                 <Instances/>
@@ -55,7 +55,7 @@
                 overflow-x: hidden;
             ">
                 <h2>Settings</h2>
-                <span>Change your settings? Go ahead!</span>
+                <span>Change your settings? Go ahead! Go crazy or something. Nothing is stopping you! Maybe?</span>
                 <hr class="medium" />
 
                 <Settings/>
