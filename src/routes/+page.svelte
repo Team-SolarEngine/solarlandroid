@@ -10,8 +10,8 @@
 
     let current_page = $state("instances");
 
-    const fly_in = { y: -40, opacity: 1, duration: 250, easing: cubicOut };
-    const fly_out = { y: 40, opacity: 0, duration: 250, easing: cubicOut };
+    const fly_in = { x: -40, y: -40, opacity: 1, duration: 250, easing: cubicOut };
+    const fly_out = { y: 40, opacity: 0, duration: 200, easing: cubicOut };
 
     let local_instnace = $state({
         open: false,
