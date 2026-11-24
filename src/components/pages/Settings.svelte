@@ -22,5 +22,8 @@
 
     <hr class="medium" />
 
-    <span>settings go here I guess</span>
+    <article>
+        <h4>No settings yet!</h4>
+        <span>Settings don't exist yet. We don't have one that's currently useful to us, so this is what you're <b>temporarily</b> getting!</span>
+    </article>
 </div>
