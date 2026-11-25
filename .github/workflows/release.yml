@@ -119,7 +119,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ inputs.version }}
           prerelease: ${{ inputs.prerelease }}
-          name: 'Solar Launcher: ${{ inputs.version }}'
+          name: 'SolarLanDroid: ${{ inputs.version }}'
           body: |
             # SolarLanDroid version; ${{ inputs.version }}
             Check out the changelogs here! [@CHANGELOGS.md](https://github.com/Team-SolarEngine/solarlandroid/blob/main/CHANGELOGS.md)
