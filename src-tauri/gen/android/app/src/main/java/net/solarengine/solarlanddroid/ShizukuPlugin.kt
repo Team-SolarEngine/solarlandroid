@@ -164,7 +164,8 @@ class ShizukuPlugin(private val activity: Activity) : Plugin(activity) {
       )
         .daemon(false)
         .processNameSuffix("storage")
-        .version(1)
+        .tag("storage-v2")
+        .version(2)
 
       Shizuku.bindUserService(args, connection)
       bound = true
