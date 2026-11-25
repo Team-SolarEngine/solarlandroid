@@ -4,6 +4,8 @@
     <span>Finally, an FNF launcher for Android!</span>
 </div>
 
+#
+
 A FNF Launcher for Android and based of Solar Launcher! Seperate codebase, same functionalities, but less features. You can do exactly what you want in SLDesktop to SLDroid! ... *just with a little less features*
 
 > [!NOTE]
