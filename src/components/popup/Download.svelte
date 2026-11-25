@@ -4,6 +4,7 @@
     import { downloadDir, homeDir } from "@tauri-apps/api/path";
     import { error } from "@tauri-apps/plugin-log";
     import { download } from "@tauri-apps/plugin-upload";
+    import { getContext } from "svelte";
 
     type DownloadVars = {
         open: boolean;
@@ -14,6 +15,7 @@
     };
 
     let { dlpvar = $bindable<DownloadVars>() } = $props()
+    const errorPopup: any = getContext('error')
 
     let download_bytes = $state(0);
     let total_bytes = $state(0);
@@ -74,7 +76,13 @@
         } catch(e) {
             download_error = `${e}`;
             status = "Failed.";
-            error(`${e}`)
+            errorPopup({
+                active: true,
+                action: "Load GameBanana mod",
+                what_happened: "Could be a HTTP error.",
+                what_should_happen: "Fetch GameBanana's API for the mod listing.",
+                error_log: e
+            })
         } finally {
             running = false;
         }

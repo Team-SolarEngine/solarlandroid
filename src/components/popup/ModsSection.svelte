@@ -3,10 +3,11 @@
     import { invoke } from "@tauri-apps/api/core";
     import { homeDir } from "@tauri-apps/api/path";
     import { error } from "@tauri-apps/plugin-log";
+    import { getContext } from "svelte";
 
     let { msvar = $bindable() } = $props()
-
     type StorageItem = { path: string; isFolder: boolean };
+    const errorPopup: any = getContext('error')
 
     let mods = $state<Array<Mods>>([]);
     let test_path = $state("")
@@ -28,6 +29,13 @@
             shizuku.error = status.error ?? "";
         } catch (e) {
             shizuku.error = `${e}`;
+            errorPopup({
+                active: true,
+                action: "Refresh Shizuku Status",
+                what_happened: "Probably wasn't allowed or user doesn't have Shizuku enabled.",
+                what_should_happen: "Refresh Shizuku to check if it's enabled.",
+                error_log: e
+            })
         }
     }
 
@@ -45,7 +53,13 @@
             if (shizuku.serviceReady) await listMods();
         } catch (e) {
             list_error = `${e}`;
-            error(`${e}`);
+            errorPopup({
+                active: true,
+                action: "Request Shizuku Permission",
+                what_happened: "Probably wasn't allowed or user doesn't have Shizuku enabled.",
+                what_should_happen: "Request for Shizuku's permission.",
+                error_log: e
+            })
         }
     }
 
@@ -77,7 +91,13 @@
             }
         } catch (e) {
             list_error = `${e}`;
-            error(`${e}`)
+            errorPopup({
+                active: true,
+                action: "List Mods",
+                what_happened: "Shizuku might've not been enabled, or something went wrong.",
+                what_should_happen: "List mods content",
+                error_log: e
+            })
         }
     }
 
@@ -91,7 +111,13 @@
             await listMods();
         } catch (e) {
             list_error = `${e}`;
-            error(`${e}`)
+            errorPopup({
+                active: true,
+                action: "Toggle mod",
+                what_happened: "Shizuku might've not been enabled, or something went wrong.",
+                what_should_happen: `Toggle ${mod.folder} to ${enable ? "enabled" : "disabled"}`,
+                error_log: e
+            })
         }
     }
 
@@ -101,7 +127,13 @@
             await listMods();
         } catch (e) {
             list_error = `${e}`;
-            error(`${e}`)
+            errorPopup({
+                active: true,
+                action: "Delete mod",
+                what_happened: "Shizuku might've not been enabled, or something went wrong.",
+                what_should_happen: `Delete mod ${modFolder}`,
+                error_log: e
+            })
         }
     }
 
@@ -110,7 +142,13 @@
             await invoke("shizuku_open_folder", { path });
         } catch(e) {
             list_error = `${e}`;
-            error(`${e}`)
+            errorPopup({
+                active: true,
+                action: "Open Folder",
+                what_happened: "Shizuku might've not been enabled, or something went wrong.",
+                what_should_happen: `Open folder at ${path}`,
+                error_log: e
+            })
         }
     }
 

@@ -12,6 +12,7 @@
     } = $props()
 
     const download: any = getContext('download')
+    const errorPopup: any = getContext('error')
 
     let gb_loading = $state(false);
     let gb_name = $state("");
@@ -61,7 +62,13 @@
                 file_name: file._sFile || file._sName || "mod.zip",
             }));
         } catch (e) {
-            error(`${e}`)
+            errorPopup({
+                active: true,
+                action: "Load GameBanana mod",
+                what_happened: "Could be a HTTP error.",
+                what_should_happen: "Fetch GameBanana's API for the mod listing.",
+                error_log: e
+            })
         }
 
         gb_loading = false;

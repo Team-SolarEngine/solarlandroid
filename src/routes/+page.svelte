@@ -14,6 +14,7 @@
     import Snackbar from "../components/Snackbar.svelte";
     import ModsSection from "../components/popup/ModsSection.svelte";
     import Download from "../components/popup/Download.svelte";
+    import Error from "../components/popup/Error.svelte";
 
     let current_page = $state("instances");
 
@@ -42,6 +43,15 @@
         file_name: "",
     })
     setContext('download', (dat: any) => { dlpvar = dat })
+
+    let evar = $state({
+        active: false,
+        action: "",
+        what_happened: "",
+        what_should_happen: "",
+        error_log: ""
+    })
+    setContext('error', (dat: any) => { evar = dat })
 
     let local_instnace = $state({
         open: false,
@@ -143,3 +153,4 @@
 <Snackbar bind:sbvar />
 <ModsSection bind:msvar />
 <Download bind:dlpvar />
+<Error bind:evar />
