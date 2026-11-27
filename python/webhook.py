@@ -58,7 +58,7 @@ data = json.dumps({
                 f"# SolarLanDroid; {args.tag}\n"
                 f"A new **SolarLanDroid** version has been dropped!\n\n"
                 f"Download the new version of the [launcher here](https://github.com/Team-SolarEngine/SolarLanDroid/releases/tag/{args.tag}).\n"
-                f"Check out [CHANGELOG.md](https://github.com/Team-SolarEngine/SolarLanDroid/blob/main/CHANGELOG.md#{args.tag.replace('.', '')}) to check out what we changed!"
+                f"Check out [CHANGELOG.md](https://github.com/Team-SolarEngine/SolarLanDroid/blob/main/CHANGELOGS/{args.tag}) to check out what we changed!"
             ),
             "color": 14495476,
         }
