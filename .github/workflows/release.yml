@@ -118,11 +118,13 @@ jobs:
 
       - name: Fetch Changelog
         shell: bash
+        env:
+          VERSION: ${{ inputs.version }}
         run: |
           delimiter="$(uuidgen)"
           {
             echo "CHANGELOG_MARKDOWN<<$delimiter"
-            cat "CHANGELOGS/0.1.1"
+            cat "CHANGELOGS/$VERSION"
             echo
             echo "$delimiter"
           } >> "$GITHUB_ENV"
