@@ -139,7 +139,7 @@ jobs:
           body: |
             # SolarLanDroid version; ${{ inputs.version }}
 
-            $CHANGELOG_MARKDOWN
+            ${{ env.CHANGELOG_MARKDOWN }}
 
             | File | Description |
             | - | - | 
