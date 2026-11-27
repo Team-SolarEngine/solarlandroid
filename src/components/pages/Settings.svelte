@@ -27,7 +27,7 @@
     })
 </script>
 
-<div>
+<div style="overflow-y: auto; height: 100dvh; padding-bottom: 18rem;">
     <article>
         <h4>Information</h4>
         <span>SolarLanDroid is the Solar Launcher mobile version for managing FNF mods! Made with Tauri, Svelte, and BeerCSS.</span>
