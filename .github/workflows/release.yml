@@ -116,16 +116,33 @@ jobs:
             git push origin ${{ inputs.version }}
           fi
 
+      - name: Fetch Changelog
+        shell: bash
+        run: |
+          delimiter="$(uuidgen)"
+          {
+            echo "CHANGELOG_MARKDOWN<<$delimiter"
+            cat "CHANGELOGS/0.1.1"
+            echo
+            echo "$delimiter"
+          } >> "$GITHUB_ENV"
+
       - name: Create Release
         uses: softprops/action-gh-release@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ inputs.version }}
           prerelease: ${{ inputs.prerelease }}
-          name: 'SolarLanDroid: ${{ inputs.version }}'
+          name: '${{ inputs.version }}'
           body: |
             # SolarLanDroid version; ${{ inputs.version }}
-            Check out the changelogs here! [@CHANGELOGS.md](https://github.com/Team-SolarEngine/solarlandroid/blob/main/CHANGELOGS.md)
+
+            $CHANGELOG_MARKDOWN
+
+            | File | Description |
+            | - | - | 
+            | app-universal-release.apk | The recommended APK to download. Pick this one at all times. |
+            | app-universal-debug.apk | Not reccomended to download. Unless it is a final resort if the release version does not work. |
           files: |
             artifacts/**/*.apk
 
