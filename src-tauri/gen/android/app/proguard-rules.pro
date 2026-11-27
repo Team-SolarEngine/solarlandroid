@@ -19,3 +19,12 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Shizuku creates StorageService by reflection in a separate shell process.
+# R8 cannot see that construction, so without these rules it strips the
+# no-arg constructor and renames the binder surface in release builds.
+-keep class net.solarengine.solarlanddroid.StorageService { *; }
+-keep class net.solarengine.solarlanddroid.IStorageService { *; }
+-keep class net.solarengine.solarlanddroid.IStorageService$Stub { *; }
+-keep class net.solarengine.solarlanddroid.IStorageService$Stub$Proxy { *; }
+-keep class net.solarengine.solarlanddroid.IStorageService$Default { *; }
