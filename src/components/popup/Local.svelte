@@ -69,9 +69,9 @@
 <div class="overlay" class:active={vars.open} onclick={() => vars.open = false}></div>
 <dialog class="bottom" class:active={vars.open}>
     {#if !vars.editing}
-        <h4>Adding a new instnace</h4>
+        <h4>Adding a new instance</h4>
     {:else}
-        <h4>Editing a instnace</h4>
+        <h4>Editing a instance</h4>
     {/if}
 
     <div class="field label border">
@@ -83,7 +83,7 @@
     <div class="field label border">
         <input type="text" bind:value={instance_icon}>
         <label>Icon (URL)</label>
-        <output>The URL path to your instance! We reccomend URL.</output>
+        <output>The URL path to your instance! We recommend URL.</output>
     </div>
 
     <div class="field label border">
@@ -108,6 +108,10 @@
 
     <div style="margin-top: 14px;" class="right-align">
         <button class="transparent" onclick={() => vars.open = false}><i>close</i> Close</button>
-        <button onclick={() => save()}><i>add</i> Add</button>
+        {#if !vars.editing}
+            <button onclick={() => save()}><i>add</i> Add</button>
+        {:else}
+            <button onclick={() => save()}><i>edit</i> Edit</button>
+        {/if}
     </div>
 </dialog>
