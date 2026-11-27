@@ -83,11 +83,11 @@
             {#if ver_loc == "" || ver_onl == ""}
                 <span>Fetching...</span>
             {:else if ver_loc != "" && already_fetched == "failed"}
-                <span>Failed to fetch for online!</span>
+                <span style="color: rgba(255, 180, 180, 1)">Failed to fetch for online!</span>
             {:else if ver_loc == ver_onl}
                 <span>You're on the latest version!</span>
             {:else if ver_loc != ver_onl}
-                <span>Your version is outdated!</span>
+                <span style="color: rgba(255, 180, 180, 1)">Your version is outdated... Please update!</span>
             {/if}
         </div>
 

@@ -1,6 +1,6 @@
 [package]
 name = "solarlandroid"
-version = "0.1.0"
+version = "0.1.1"
 description = "FNF Mod Manager for mobile! Easily mod your FNF instances with one app."
 authors = ["FNF Solar Team"]
 edition = "2024"
